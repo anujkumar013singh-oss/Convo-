@@ -10,9 +10,10 @@ const router = express.Router();
 
 // Rate limiting for auth & OTP endpoints
 const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 30, // max 30 requests per window
+  windowMs: 15 * 60 * 1000,
+  max: 100,
   message: { error: 'Too many requests, please try again later.' },
+  validate: { trustProxy: false },
 });
 
 router.use(authLimiter);
