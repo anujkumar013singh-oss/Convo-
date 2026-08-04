@@ -15,7 +15,10 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.set('trust proxy', 1);
 
-// 1. Global CORS & OPTIONS preflight handler (Allows all origins & headers)
+// Connect to MongoDB Atlas (connection pooling)
+connectDB().catch((err) => console.error('[DB Init Error]:', err));
+
+// 1. Global CORS & OPTIONS preflight handler
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -45,7 +48,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
-// Root & Health Check Endpoints
+// Root & Health check endpoints
 app.get('/', (req, res) => {
   res.json({
     name: 'CONVO Backend API',
@@ -73,16 +76,14 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-// DB Connection Middleware for API routes
+// Middleware to ensure DB connection before handling routes
 app.use(async (req, res, next) => {
   try {
     await connectDB();
     next();
   } catch (err) {
     console.error('[DB Serverless Error]:', err);
-    return res.status(500).json({
-      error: `MongoDB Atlas Connection Error: ${err.message}`,
-    });
+    return res.status(500).json({ error: `Database Connection Error: ${err.message}` });
   }
 });
 
@@ -99,11 +100,4 @@ app.use((err, req, res, next) => {
   return res.status(err.status || 500).json({ error: message });
 });
 
-export default async function handler(req, res) {
-  try {
-    await connectDB();
-  } catch (dbErr) {
-    console.error('[Handler DB Error]:', dbErr);
-  }
-  return app(req, res);
-}
+export default app;
