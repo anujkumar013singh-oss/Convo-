@@ -1,22 +1,11 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
-import rateLimit from 'express-rate-limit';
 import nodemailer from 'nodemailer';
 import User from '../models/User.js';
 import OTP from '../models/OTP.js';
 import { generateTokens, verifyRefreshToken } from '../middleware/auth.js';
 
 const router = express.Router();
-
-// Rate limiting for auth & OTP endpoints
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: { error: 'Too many requests, please try again later.' },
-  validate: { trustProxy: false },
-});
-
-router.use(authLimiter);
 
 // Configure Nodemailer Transporter using Brevo SMTP Relay
 const transporter = nodemailer.createTransport({
