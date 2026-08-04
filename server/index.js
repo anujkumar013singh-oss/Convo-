@@ -14,6 +14,7 @@ import conversationRoutes from './routes/conversationRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import User from './models/User.js';
 import { initSocketServer } from './socket/index.js';
+import errorHandler from './middleware/errorHandler.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -82,6 +83,9 @@ app.use('/api/upload', uploadRoutes);
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+// Centralized Error Handling Middleware
+app.use(errorHandler);
 
 // Initialize Socket.IO Server
 initSocketServer(httpServer);

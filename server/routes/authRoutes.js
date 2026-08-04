@@ -4,6 +4,7 @@ import nodemailer from 'nodemailer';
 import User from '../models/User.js';
 import OTP from '../models/OTP.js';
 import { generateTokens, verifyRefreshToken } from '../middleware/auth.js';
+import { validateSendOTP, validateVerifyOTP, validateRegister, validateLogin, validateResetPassword } from '../middleware/validate.js';
 
 const router = express.Router();
 
@@ -118,7 +119,7 @@ const sendBrevoEmailOtp = async (email, otpCode) => {
 };
 
 // ── POST /api/auth/send-otp ──
-router.post('/send-otp', async (req, res) => {
+router.post('/send-otp', validateSendOTP, async (req, res) => {
   try {
     const { email, otp, isForgotPassword } = req.body;
     if (!email || !email.includes('@')) {
@@ -148,7 +149,7 @@ router.post('/send-otp', async (req, res) => {
 });
 
 // ── POST /api/auth/verify-otp ──
-router.post('/verify-otp', async (req, res) => {
+router.post('/verify-otp', validateVerifyOTP, async (req, res) => {
   try {
     const { email, otp } = req.body;
     if (!email || !otp) {
@@ -168,7 +169,7 @@ router.post('/verify-otp', async (req, res) => {
 });
 
 // ── POST /api/auth/register ──
-router.post('/register', async (req, res) => {
+router.post('/register', validateRegister, async (req, res) => {
   try {
     const { username, fullName, email, phone, password, avatarUrl } = req.body;
 
@@ -235,7 +236,7 @@ router.post('/register', async (req, res) => {
 });
 
 // ── POST /api/auth/login ──
-router.post('/login', async (req, res) => {
+router.post('/login', validateLogin, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -316,7 +317,7 @@ router.post('/refresh', async (req, res) => {
 });
 
 // ── POST /api/auth/reset-password (Real Database Password Update) ──
-router.post('/reset-password', async (req, res) => {
+router.post('/reset-password', validateResetPassword, async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password || password.length < 6) {

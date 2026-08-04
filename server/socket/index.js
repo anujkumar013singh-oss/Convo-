@@ -64,7 +64,7 @@ export function initSocketServer(httpServer) {
     const updatedOnlineUser = await User.findByIdAndUpdate(
       userId,
       { isOnline: true, lastSeenAt: new Date() },
-      { new: true }
+      { returnDocument: 'after' }
     );
     io.emit('presence', {
       userId,
