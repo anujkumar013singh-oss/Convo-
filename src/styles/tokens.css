@@ -1,0 +1,58 @@
+:root {
+  /* ── Color tokens ── */
+  --color-bg-base: #000000;
+  --color-bg-raised: #141414;
+  --color-bg-hover: #1f1f1f;
+  --color-bg-active: #282828;
+  --color-accent: #8774e1;
+  --color-accent-hover: #9d8ce8;
+  --color-accent-strong: #ff595a;
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #bbbbbb;
+  --color-text-tertiary: #888888;
+  --color-border-subtle: rgba(255, 255, 255, 0.1);
+  --color-bubble-out: #8774e1;
+  --color-bubble-in: #1f1f1f;
+  --color-online-dot: #4CD964;
+  --color-destructive: #ff595a;
+  --color-success: #4CD964;
+  --color-warning: #ffb74d;
+
+  /* ── Spacing tokens ── */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-18: 72px;
+
+  /* ── Radius tokens ── */
+  --radius-xs: 16px;
+  --radius-sm: 20px;
+  --radius-md: 22px;
+  --radius-lg: 28px;
+  --radius-xl: 50px;
+  --radius-2xl: 54px;
+  --radius-full: 9999px;
+
+  /* ── Motion tokens ── */
+  --duration-instant: 100ms;
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 250ms;
+  --duration-slower: 300ms;
+
+  /* ── Typography ── */
+  --font-family-body: 'Elms Sans', -apple-system, system-ui, "Segoe UI", sans-serif;
+  --font-family-heading: 'Chivo Mono', monospace, sans-serif;
+  --font-size-base: 16px;
+  --line-height-base: 24px;
+
+  /* ── Shadows ── */
+  --shadow-glow: 0 0 24px rgba(135, 116, 225, 0.25);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
