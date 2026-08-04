@@ -15,13 +15,13 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.set('trust proxy', 1);
 
-// 1. Global CORS & OPTIONS preflight handler (MUST be first)
+// 1. Global CORS & OPTIONS preflight handler
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
+    return res.status(200).end();
   }
   next();
 });
@@ -40,13 +40,12 @@ app.use(
   })
 );
 
-// 2. Body Parsers (MUST be before routes & DB middleware)
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
-// 3. Health & root test endpoints (Instant response, no DB block)
+// Health check endpoints
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
@@ -59,30 +58,37 @@ app.get('/api', (req, res) => {
   });
 });
 
-// 4. DB Connection Middleware for API routes
+// DB Connection Middleware
 app.use('/api', async (req, res, next) => {
   try {
     await connectDB();
     next();
   } catch (err) {
-    console.error('[DB Serverless Error]:', err.message);
-    res.status(500).json({
-      error: `MongoDB Atlas Connection Error: ${err.message}. Please verify MONGODB_URI in Vercel Environment Variables.`,
+    console.error('[DB Serverless Error]:', err);
+    return res.status(500).json({
+      error: `MongoDB Atlas Connection Error: ${err.message}`,
     });
   }
 });
 
-// 5. REST API Routes
+// REST API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/conversations', conversationRoutes);
 app.use('/api/upload', uploadRoutes);
 
-// 6. Global Error Handler for Vercel Serverless Function
+// Global Error Handler
 app.use((err, req, res, next) => {
   console.error('[API Server Error]:', err);
   const message = typeof err === 'string' ? err : err.message || 'Internal Server Error';
-  res.status(err.status || 500).json({ error: message });
+  return res.status(err.status || 500).json({ error: message });
 });
 
-export default app;
+export default async function handler(req, res) {
+  try {
+    await connectDB();
+  } catch (dbErr) {
+    console.error('[Handler DB Error]:', dbErr);
+  }
+  return app(req, res);
+}

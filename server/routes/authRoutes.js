@@ -281,12 +281,18 @@ router.post('/login', async (req, res) => {
 
     const { accessToken, refreshToken } = generateTokens(user._id);
 
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
+    try {
+      if (res.cookie) {
+        res.cookie('refreshToken', refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          maxAge: 30 * 24 * 60 * 60 * 1000,
+        });
+      }
+    } catch (e) {
+      /* ignore cookie header error in serverless */
+    }
 
     res.json({
       user: user.toJSON(),
