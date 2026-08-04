@@ -3,11 +3,11 @@ import cors from 'cors';
 import helmet from 'helmet';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import connectDB from '../server/config/db.js';
-import authRoutes from '../server/routes/authRoutes.js';
-import userRoutes from '../server/routes/userRoutes.js';
-import conversationRoutes from '../server/routes/conversationRoutes.js';
-import uploadRoutes from '../server/routes/uploadRoutes.js';
+import connectDB from './config/db.js';
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import conversationRoutes from './routes/conversationRoutes.js';
+import uploadRoutes from './routes/uploadRoutes.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
