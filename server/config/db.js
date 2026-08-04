@@ -1,15 +1,14 @@
 import mongoose from 'mongoose';
 
+const DEFAULT_MONGODB_URI = 'mongodb+srv://alonesurvivor03_db_user:Anuj1234@cluster0.qwgai2u.mongodb.net/convo?retryWrites=true&w=majority&appName=Cluster0';
+
 export const connectDB = async () => {
   // If connection is already established, reuse it (Vercel Serverless connection pooling)
   if (mongoose.connection.readyState === 1) {
     return mongoose.connection;
   }
 
-  const uri = process.env.MONGODB_URI;
-  if (!uri) {
-    throw new Error('MONGODB_URI environment variable is not defined in Vercel settings.');
-  }
+  const uri = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
 
   try {
     const conn = await mongoose.connect(uri, {
