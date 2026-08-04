@@ -15,7 +15,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.set('trust proxy', 1);
 
-// 1. Global CORS & OPTIONS preflight handler
+// 1. Global CORS & OPTIONS preflight handler (Allows all origins & headers)
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -45,21 +45,36 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
 
-// Health check endpoints
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+// Root & Health Check Endpoints
+app.get('/', (req, res) => {
+  res.json({
+    name: 'CONVO Backend API',
+    status: 'online',
+    version: '1.0.0',
+    endpoints: {
+      auth: '/api/auth',
+      users: '/api/users',
+      conversations: '/api/conversations',
+      upload: '/api/upload',
+      health: '/api/health',
+    },
+  });
 });
 
 app.get('/api', (req, res) => {
   res.json({
-    name: 'CONVO Real-Time Messaging API',
+    name: 'CONVO Backend API',
     status: 'online',
     version: '1.0.0',
   });
 });
 
-// DB Connection Middleware
-app.use('/api', async (req, res, next) => {
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+// DB Connection Middleware for API routes
+app.use(async (req, res, next) => {
   try {
     await connectDB();
     next();
