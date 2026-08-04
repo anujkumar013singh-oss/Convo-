@@ -87,7 +87,8 @@ export default function Login() {
       }
     } catch (err) {
       setIsSendingOtp(false);
-      const msg = err.response?.data?.error || err.message || 'Failed to send verification email';
+      const rawErr = err.response?.data?.error || err.message || 'Failed to send verification email';
+      const msg = typeof rawErr === 'object' ? (rawErr.message || JSON.stringify(rawErr)) : String(rawErr);
       toast.error(msg);
     }
   };

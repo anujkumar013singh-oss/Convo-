@@ -2,6 +2,16 @@ import { create } from 'zustand';
 import api from '../services/api';
 import { disconnectGlobalSocket } from '../hooks/useSocket';
 
+const extractErrorMessage = (err, fallback) => {
+  const errData = err.response?.data?.error || err.response?.data?.message || err.message;
+  if (!errData) return fallback;
+  if (typeof errData === 'string') return errData;
+  if (typeof errData === 'object') {
+    return errData.message || errData.error || JSON.stringify(errData);
+  }
+  return String(errData);
+};
+
 const useAuthStore = create((set, get) => ({
   user: null,
   token: null,
@@ -27,7 +37,7 @@ const useAuthStore = create((set, get) => ({
       });
       return { success: true, user };
     } catch (err) {
-      const errorMsg = err.response?.data?.error || err.message || 'Login failed';
+      const errorMsg = extractErrorMessage(err, 'Login failed');
       set({ error: errorMsg, isLoading: false });
       return { success: false, error: errorMsg };
     }
@@ -51,7 +61,7 @@ const useAuthStore = create((set, get) => ({
       });
       return { success: true, user };
     } catch (err) {
-      const errorMsg = err.response?.data?.error || err.message || 'Registration failed';
+      const errorMsg = extractErrorMessage(err, 'Registration failed');
       set({ error: errorMsg, isLoading: false });
       return { success: false, error: errorMsg };
     }
